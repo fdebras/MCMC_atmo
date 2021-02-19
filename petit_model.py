@@ -60,7 +60,7 @@ class Model(object):
             atmosphere = Radtrans(line_species = ['H2O_main_iso'], \
 		  rayleigh_species = ['H2', 'He'], \
 		  continuum_opacities = ['H2-H2'], \
-		  wlen_bords_micron = [self.lambdas[i][0]*0.99,self.lambdas[i][1]*1.01], \
+		  wlen_bords_micron = [self.lambdas[i][0]/1000.0*0.99,self.lambdas[i][1]/1000.0*1.01], \
 		  mode = 'lbl')
             atmosphere.setup_opa_structure(self.pressures)
             
