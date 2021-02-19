@@ -53,15 +53,19 @@ class Model(object):
 # 		  wlen_bords_micron = [self.wlen_min,self.wlen_max], \
 # 		  mode = 'lbl')
             
-        self.atmosphere= Radtrans(line_species = ['H2O_main_iso'], \
+        self.atmospheres= []
+        self.pressures=np.logspace(self.p_minbar,self.p_maxbar,self.n_pressure)
+        
+        for i in self.orders: 
+            atmosphere = Radtrans(line_species = ['H2O_main_iso'], \
 		  rayleigh_species = ['H2', 'He'], \
 		  continuum_opacities = ['H2-H2'], \
-		  wlen_bords_micron = [self.wlen_min,self.wlen_max], \
+		  wlen_bords_micron = [self.lambdas[i][0]*0.99,self.lambdas[i][1]*1.01], \
 		  mode = 'lbl')
-	 
-        self.pressures=np.logspace(self.p_minbar,self.p_maxbar,self.n_pressure)
-	
-        self.atmosphere.setup_opa_structure(self.pressures)#petitRADTRANS initialisation    
+            atmosphere.setup_opa_structure(self.pressures)
+            
+            self.atmospheres.append(atmosphere)
+            
         self.abundances = {}
 	
 	
@@ -104,11 +108,13 @@ class Model(object):
         # MMW = 1.0/(MMR_H2/2.0+MMR_He/4.0+self.MMR_H2O/18.0+
                    # self.MMR_CO2/48.0 + 
                    # self.MMR_CO/28.0)*np.ones_like(temperature)
+        freq_nm = []
+        radius_transm_cm = []
+        for atmo in self.atmospheres:
+            atmo.calc_transm(temperature, self.abundances, self.gravity, MMW, R_pl=self.radius, P0_bar=self.P0)
         
-        self.atmosphere.calc_transm(temperature, self.abundances, self.gravity, MMW, R_pl=self.radius, P0_bar=self.P0)
-        freq_nm = nc.c/self.atmosphere.freq/1.0e-7
-        # print(freq_nm[0])
-        radius_transm_cm=self.atmosphere.transm_rad
+            freq_nm.append(nc.c/atmo.freq/1.0e-7)
+            radius_transm_cm.append(atmo.transm_rad)
         
         return {
             "freq_nm": freq_nm,

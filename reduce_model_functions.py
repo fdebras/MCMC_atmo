@@ -127,11 +127,11 @@ class reduced:
      
             
     def orders_models(self):  
-        for no in self.list_ord:   
+        for i in range(len(self.Wm)):   
             ### First we have to select only the portion of  the model that is of interest for us
-            limits = [self.lambdas[no][0]*0.995,self.lambdas[no][1]*1.005]
-            portion = np.where((self.Wm>limits[0]) & (self.Wm < limits[1]))
-            M           = reduced_order(no,self.lambdas[no],self.Wm[portion],self.Rp[portion],self.R_s)
+            # limits = [self.lambdas[no][0]*0.995,self.lambdas[no][1]*1.005]
+            no = self.list_ord[i]
+            M  = reduced_order(no,self.lambdas[no],self.Wm[i],self.Rp[i],self.R_s)
             self.models.append(M)
         
 

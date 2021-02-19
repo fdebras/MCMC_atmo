@@ -1,5 +1,5 @@
 # MCMC_atmo
-Emcee based code to study planetary atmospheres. This version of the code can combine orders but is very slow because it creates a transmission spectrum over the whole order limits.
+Emcee based code to study planetary atmospheres. This branch tries to improve the combination by creating an atmosphere petitRADTRANS model for each order.
 
 The code creates a posterior class, that contains a model, a prior and a likelihood.
 
