@@ -57,6 +57,7 @@ class Model(object):
         self.pressures=np.logspace(self.p_minbar,self.p_maxbar,self.n_pressure)
         
         for i in self.orders: 
+            print(self.lambdas[i])
             atmosphere = Radtrans(line_species = ['H2O_main_iso'], \
 		  rayleigh_species = ['H2', 'He'], \
 		  continuum_opacities = ['H2-H2'], \
