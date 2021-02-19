@@ -1,0 +1,254 @@
+import numpy as np
+from numpy import ma
+
+import sys
+import os
+import time
+
+from scipy import interpolate
+import batman
+
+import matplotlib.pyplot as plt
+import matplotlib
+
+
+
+class Model_2D:
+    
+    """
+    Class model
+    Store the templates of transmission spectrum of the planet atmosphere
+    """
+    
+    
+    def __init__(self,reduced_dic):
+        
+        
+        
+        self.Vm = reduced_dic["velocity"]
+        self.absor = reduced_dic["absorption"]
+        self.Fm = []
+
+    
+    def build_model(self,window):
+        """
+        Create a 2D sequence template
+        Interpolate each template         
+        """
+        
+        I_t   = self.absor
+        I_mod = []
+        for nn in range(len(window)):
+            I_line = I_t*window[nn]
+            I_mod.append(I_line)
+        I_mod = np.array(I_mod,dtype=float)
+                
+        # Compute interpolation of each line of the model
+        FM = []
+        for n in range(len(window)):
+            f_mod = interpolate.interp1d(self.Vm,I_mod[n],kind='linear')
+            FM.append(f_mod)
+        self.Fm = np.array(FM)
+
+
+
+        
+class Planet:
+
+    """
+    Class Planet
+    All elements related to the observed transit and the weighting window to make the model
+    """
+    
+        
+    def __init__(self,Rp_Rs,inc,t0,sma,orb_per,w_peri,ecc,limbdark,u_limbdark,dates):
+        
+        
+        self.rp    = Rp_Rs  ## Planet radius in stellar radius unit [R_s]
+        self.inc   = inc ## Inclination of the planetary transit [deg]
+        self.t0    = t0  ## Mid-transit time [phase]
+        self.a     = sma  ## SMA [R_s]
+        self.per   = orb_per ## Orbital period [d]
+        self.ecc   = ecc  ## eccentricity
+        self.w     = w_peri  ## long. of periastrion [deg]
+        self.ld    = limbdark   ## limb darkening model -- batman
+        self.u     = u_limbdark   ## factors for limb darkening
+        
+        self.date   = dates   ## Phase vector
+        self.batman = ""   ## Batman transit model
+        self.flux   = []   ## Normalized light curve
+        self.window = []   ## Window function from transit curve
+        self.lims   =  []   ## limits where the window is non zero
+        
+        
+    def make_batman(self):
+        """
+        Use batman to generate a transit light-curve given the attributes of the Planet object
+        """        
+        
+        ### See https://www.cfa.harvard.edu/~lkreidberg/batman/
+        ### Init parameters
+        params = batman.TransitParams()
+        params.rp        = self.rp                       
+        params.inc       = self.inc
+        params.t0        = self.t0   
+        params.a         = self.a    
+        params.per       = self.per  
+        params.ecc       = self.ecc 
+        params.w         = self.w          
+        params.limb_dark = self.ld
+        params.u         = self.u
+        
+        ### Make transit light-curve
+        self.batman = batman.TransitModel(params,self.date)
+        self.flux   = self.batman.light_curve(params)
+  
+    def make_window(self):
+        """
+        Build weighting window from the transit-light curve
+        """        
+
+        ### Build window
+        FF          = 1.-self.flux
+        self.window = FF/np.max(FF)
+        self.lims = np.where(self.window>0)
+            
+            
+    def RVP(self,kp,v0):
+        """
+        Return RV values for the planet
+        """
+        V1 = kp*np.sin(2*np.pi*(self.date-self.t0)/(self.per))+v0
+        return V1
+
+
+
+class total_model:
+    
+    """
+    Class CCF that handles the Matching template filter and the cross-correlation between the modelled sequence of spectra and the data
+    """
+
+    
+    def __init__(self,Kp,Vsys,models):
+        
+        
+        self.planet = ""   ## Planet object
+        self.models  = models   ## Model object
+        
+        self.Vfiles = []
+        self.Ifiles = []
+        
+        self.Kp  = Kp  ## Values of semi-amplitude of the planet orbit for parameter search (1D vector)
+        self.Vsys = Vsys   ## Values of radial velocity at mid-transit for parameter search (1D vector)
+        self.V0_ccf = []   ## Values of RV used to cross-correl the template spectrum to each of spectrum of the reduced sequence
+        self.ddv    = []   ## Vector of velocity used for the integration of the model when binned into the data sampling scheme
+                           ## We generally center it on 0 with half width of 1 SPIRou pixel (i.e. ~2 km/s)  
+        
+        self.corrcoeff = 0
+        self.model2D=  []      
+
+    def bin_model(self):
+
+        """
+        Bin the model at the resolution of the data accounting for the shifts in velocity for (k,v) values
+        
+        Inputs:
+        - k,v:    semi-amplitude and mid-transit velocity (floats)
+        - V_data: Velocity matrix of the sequence to bin (returned after applying OBS.shift_rv method.
+                  Each line is the velocity vector of the spectrum shifted in the stellar rest frame
+
+        Outputs:
+        - I_ret: Binned model at the resolution of the data where spectra are shifted at (k,v)
+        """
+
+        ### Compute the Radial Velocity of the planet in the stellar rest frame
+        DVP   = self.planet.RVP(self.Kp,self.Vsys)
+
+
+        num_spectra = len(self.planet.date)
+        num_ords = len(self.models)
+        
+        data_ret = []
+        model_ret = []  ### Init binned sequence of spectra
+        
+        
+        for i in range(num_ords):
+            V_data =  np.loadtxt(self.Vfiles[i])
+            I_data = np.loadtxt(self.Ifiles[i])
+            for n in range(num_spectra):
+                if (self.planet.window[n] > 0):
+                    I_tmp= np.zeros(len(V_data[0]))
+                    data_tmp = np.zeros(len(V_data[0]))
+    
+    			### For dd in the window centered on 0 and of 1 px width (here 2 km/s)
+                    for dd in self.ddv:
+                        I_tmp += self.models[i].Fm[n](V_data[n]+dd-DVP[n]) 
+                    I_tmp = I_tmp/len(self.ddv)### Average values to be closer to measured values
+                    I_tmp -= np.mean(I_tmp)
+                    model_ret.append(I_tmp)
+                    
+                    data_tmp =  I_data[n]
+                    data_tmp -= np.mean(data_tmp)
+                    data_ret.append(data_tmp)
+        # np.savetxt("lol.txt",I_ret)
+        
+        
+        return model_ret,data_ret ### Binned modelled sequence shifted at (kp,v0)
+
+
+
+
+    # def make_corr(self,V_data,I_data):
+
+    #     """ 
+    #     Explore (Kp,V0) parameter space by correlating the modelled sequence of spectra with the reduced sequence
+    #     for all couple of parameters in the grid. 
+
+    #     Inputs:
+    #     - V_data: Velocity matrix where each line is the velocity vector of the spectrum shifted in the stellar rest frame
+    #     - I_data: reduced sequence of spectra
+
+    #     Outputs:
+    #     - corr: Matrix of correlation coefficients (shape: (len(self.K_vec),len(self.V0_vec)))
+    #     """
+
+    #     Im = self.bin_model(self.Kp,self.Vsys,V_data)
+    #     corr = np.array(get_cc(I_data,Im),dtype=float)
+
+        
+    #     self.model2D = Im
+    #     self.corrcoeff = corr
+
+
+# def get_cc(Yd,Ym):
+#     """
+#     Compute the correlation coefficient between the sequence of spectra and the modelled sequence of the spectra
+#     If a spectrum in the modelled sequence of spectra is 0, np.corrcoef returns NaN. This displays a warning message,
+#     but we account for this in the process.
+#     Inputs:
+#     - Yd: 2D sequence of spectra
+#     - Ym: Modelled sequence of spectra (binned at the resolution of data - same shape as Yd)
+
+#     Outputs:
+#     - Correlation coefficient between the 2 spectra
+#     """
+
+#     C0 = np.zeros(len(Yd))
+#     for n in range(len(Yd)):
+#         #c = np.ma.corrcoef(Yd[n],Ym[n]).data[0,1]
+#         c = np.corrcoef(Yd[n],Ym[n])[0,1]
+#         if np.isfinite(c): C0 [n]= c  ### Avoid NaNs (modelled spectrum is 0 (no planet in out-of-transit periods)
+#     return C0
+
+
+
+
+
+
+
+
+
+
+
+        
