@@ -214,7 +214,7 @@ class Posterior:
     def ln_like(self, d):
         d = dict(d)
         try:
-            resid = self.model.prepare_likelilihood(d)
+            resid = self.model.prepare_likelihood(d)
         except RuntimeError:
             return -np.inf
         self.like.corr = resid
