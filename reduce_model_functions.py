@@ -63,13 +63,12 @@ def norm_pts(n_points,Wm,Im,N_bor):
 
 class reduced_order:
     
-    def __init__(self,nb,lamb_lim,Wmean,Wm,Rp,R_s):
+    def __init__(self,nb,Wmean,Wm,Rp,R_s):
         
         self.nb = nb
         self.Wm          = Wm # wavelength model
         self.Rp          = Rp
         self.Vm          = [] # velocity model
-        self.lamb_lim    = lamb_lim  ## limits of the SPIRou orders !!!!!! different from model limits
         self.DD          = []   ## 1D vector -- Rp as fct of Wm
         self.W_mean      = Wmean  ## WARNING -- must be consistent with that used in data
         
@@ -129,9 +128,8 @@ class reduced:
             ### First we have to select only the portion of  the model that is of interest for us
             # limits = [self.lambdas[no][0]*0.995,self.lambdas[no][1]*1.005]
             no = self.list_ord[i]
-            Wmean = 0.5*(self.lambdas[i][0]+self.lambdas[i][1])
-            print(Wmean)
-            M  = reduced_order(no,self.lambdas[no],Wmean,self.Wm[i],self.Rp[i],self.R_s)
+            Wmean = 0.5*(self.lambdas[no][0]+self.lambdas[no][1])
+            M  = reduced_order(no,Wmean,self.Wm[i],self.Rp[i],self.R_s)
             self.models.append(M)
         
 
