@@ -123,25 +123,21 @@ param_names = [
         # "MMR_CO2",
         "Kp",
         "Vsys",
-]
-        # "kappa_IR",
-        # "gamma",
-        # "T_int",
-        # "T_eq",
+         # "kappa_IR",
+         # "gamma",
+         # "T_int",
+         # "T_eq",
+         ]
 
-if args.enable_diff_rotation:
-    param_names += [
-        "omega_slope_l0",
-        "omega_slope_surface",
-        "omega_surface",
-    ]
+
 unprior = dict( kappa_IR=0.01,
         gamma=0.012,
         T_int=200,
-        T_eq=1100,
-        MMR_H2O=0.001,
+        T_eq=850,
+        # MMR_H2O=0.001,
         MMR_CO=0.0,
-        MMR_CO2=0.0,)
+        MMR_CO2=0.0)
+        # Kp = 151)
 ndim = len(param_names)
 
 
@@ -165,8 +161,6 @@ config = dict(
     radius_RJ=planet_data["radius_RJ"],
     Rs_Rsun = planet_data["Rs_Rsun"],
     gravity_SI= planet_data["gravity_SI"],
-    wlen_min = 1.6,
-    wlen_max = 1.7,
     P0_bar = 0.1,
     HHe_ratio=0.275,  # solar ratio
     #now the transit parameters

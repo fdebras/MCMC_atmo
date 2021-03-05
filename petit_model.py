@@ -19,8 +19,6 @@ class Model(object):
         self.radius=config_dict["radius_RJ"]*nc.r_jup_mean
         self.Rs=config_dict["Rs_Rsun"]*7.0e10
         self.gravity=config_dict["gravity_SI"]*100.0
-        self.wlen_min=config_dict["wlen_min"]
-        self.wlen_max=config_dict["wlen_max"]
         self.HHe_ratio=config_dict["HHe_ratio"]
 		
 		#now the transit
@@ -44,6 +42,7 @@ class Model(object):
         self.T_int = config_dict["T_int"]
         self.T_eq = config_dict["T_eq"]
         # self.MMR_H2O = config_dict["MMR_H2O"]
+        # self.Kp = config_dict["Kp"]
         # self.MMR_CO2 = config_dict["MMR_CO2"]
         # self.MMR_CO = config_dict["MMR_CO"]
         
@@ -57,12 +56,12 @@ class Model(object):
         self.pressures=np.logspace(self.p_minbar,self.p_maxbar,self.n_pressure)
         
         for i in self.orders: 
-            print(self.lambdas[i])
-            atmosphere = Radtrans(line_species = ['H2O_main_iso'], \
-		  rayleigh_species = ['H2', 'He'], \
-		  continuum_opacities = ['H2-H2'], \
-		  wlen_bords_micron = [self.lambdas[i][0]/1000.0*0.99,self.lambdas[i][1]/1000.0*1.01], \
-		  mode = 'lbl')
+            print(self.lambdas[i][0])
+            atmosphere = Radtrans(line_species = ['H2O_main_iso'],
+                                  rayleigh_species = ['H2', 'He'],
+                                  continuum_opacities = ['H2-H2'], 
+                          wlen_bords_micron = [self.lambdas[i][0]/1000.0*0.95,self.lambdas[i][1]/1000.0*1.05],
+                          mode = 'lbl')
             atmosphere.setup_opa_structure(self.pressures)
             
             self.atmospheres.append(atmosphere)
@@ -71,13 +70,14 @@ class Model(object):
 	
 	
     def compute_petit(self, para_dic): # creates an atmospheric model    
-        # temperature=nc.guillot_global(self.pressures, 10.0**para_dic["kappa_IR"], \
-# 		10.0**para_dic["gamma"], self.gravity, para_dic["T_int"], para_dic["T_eq"])
-        temperature=nc.guillot_global(self.pressures, self.kappa_IR, \
-		self.gamma, self.gravity, self.T_int, self.T_eq)
+        #temperature=nc.guillot_global(self.pressures, 10.0**para_dic["kappa_IR"], \
+		#10.0**para_dic["gamma"], self.gravity, para_dic["T_int"], para_dic["T_eq"])
+        # temperature=nc.guillot_global(self.pressures, self.kappa_IR, \
+# 		self.gamma, self.gravity, self.T_int, self.T_eq)
+        temperature=self.T_eq*np.ones_like(self.pressures)
 		
         Z= 10.0**para_dic["MMR_H2O"]#+10.0**para_dic["MMR_CO2"]+10.0**para_dic["MMR_CO"]
-        # Z= self.MMR_H2O+self.MMR_CO2+self.MMR_CO
+        #Z= self.MMR_H2O#+self.MMR_CO2+self.MMR_CO
 
 		
         MMR_H2 = (1.0-Z)*(1-self.HHe_ratio)
@@ -105,13 +105,15 @@ class Model(object):
                     # 10.0**para_dic["MMR_CO"]/28.0)
         
 
+        # MMW = 1.0/(MMR_H2/2.0+MMR_He/4.0+self.MMR_H2O/18.0)*np.ones_like(temperature)
 
         # MMW = 1.0/(MMR_H2/2.0+MMR_He/4.0+self.MMR_H2O/18.0+
                    # self.MMR_CO2/48.0 + 
                    # self.MMR_CO/28.0)*np.ones_like(temperature)
         freq_nm = []
         radius_transm_cm = []
-        for atmo in self.atmospheres:
+        for i in len(self.atmospheres):
+            atmo = self.atmospheres[i]
             atmo.calc_transm(temperature, self.abundances, self.gravity, MMW, R_pl=self.radius, P0_bar=self.P0)
         
             freq_nm.append(nc.c/atmo.freq/1.0e-7)

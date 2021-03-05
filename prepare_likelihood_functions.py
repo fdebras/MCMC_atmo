@@ -48,7 +48,7 @@ class Model_2D:
         for n in range(len(window)):
             f_mod = interpolate.interp1d(self.Vm,I_mod[n],kind='linear')
             FM.append(f_mod)
-        self.Fm = np.array(FM)
+        self.Fm = FM
 
 
 
@@ -145,7 +145,6 @@ class total_model:
         self.ddv    = []   ## Vector of velocity used for the integration of the model when binned into the data sampling scheme
                            ## We generally center it on 0 with half width of 1 SPIRou pixel (i.e. ~2 km/s)  
         
-        self.corrcoeff = 0
         self.model2D=  []      
 
     def bin_model(self):

@@ -25,9 +25,6 @@ import batman
 
 def reduce(model_dic,R_s,lambdas,orders):
 
-	# List of the obs names -- e.g. 2305120.txt \n 2305121 \n .... 2305155
-	name_temp = "temp.txt"
-
 
 	### Technical parameters for the model
 	# Number of percentiles to be set to 0:

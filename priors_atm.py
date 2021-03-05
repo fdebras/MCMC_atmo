@@ -104,8 +104,8 @@ class SimplexUniformT_Priors(object):
         "T_eq",
     ]
 
-    def __init__(self, kappa_min=-5.0, kappa_max=-2.0, gamma_min=-2.0,gamma_max=2.0,T_int_min=0.0,T_int_max=500.0, \
-    T_eq_min=800.0,T_eq_max=2500.0):
+    def __init__(self, kappa_min, kappa_max, gamma_min,gamma_max,T_int_min,T_int_max, \
+    T_eq_min,T_eq_max):
     
         self.kappa_min = kappa_min
         self.kappa_max = kappa_max
@@ -153,12 +153,12 @@ class SimplexUniformT_Priors(object):
 
 class SimplexUniformAbund_Priors(object):
     params = [
-        "MMR_H2O",
-        "MMR_CO",
-        "MMR_CO2",
+        "MMR_H2O"
+        # "MMR_CO",
+        # "MMR_CO2",
     ]
 
-    def __init__(self, H2O_min=-8.0, H2O_max=-2.0):
+    def __init__(self, H2O_min, H2O_max):
     # , CO2_min=-8.0, CO2_max=-2.0,CO_min=-8.0, CO_max=-2.0):
 
         self.H2O_min = H2O_min
@@ -200,25 +200,25 @@ class SimplexUniformAbund_Priors(object):
                 return d
 
 class SimplexUniformTransit_Priors(object):
-    params = [
-        "Kp",
+    params = [ "Kp",
         "Vsys"
     ]
 
-    def __init__(self, Kp_min=100,Kp_max=300, \
-    Vsys_min=-20.0,Vsys_max=20.0):
-        self.Kp_min = Kp_min
-        self.Kp_max = Kp_max
+    def __init__(self,Kp_min,Kp_max,Vsys_min,Vsys_max):
+
         
         self.Vsys_min = Vsys_min
         self.Vsys_max = Vsys_max
+        
+        self.Kp_min = Kp_min
+        self.Kp_max = Kp_max
 
     
 
     def _is_inside_simplex(self, d):
 
-        return (self.Kp_min<d["Kp"]<self.Kp_max
-                and self.Vsys_min<d["Vsys"]<self.Vsys_max
+        return (self.Vsys_min<d["Vsys"]<self.Vsys_max and
+                self.Kp_min<d["Kp"]<self.Kp_max
         )
 
     def ln_prior(self, param_dict):
@@ -229,9 +229,8 @@ class SimplexUniformTransit_Priors(object):
 
     def rvs(self):
         while True:
-            d = {
-                "Kp": np.random.uniform(low=self.Kp_min, high=self.Kp_max),
-                "Vsys": np.random.uniform(low=self.Vsys_min, high=self.Vsys_max),
+            d = {"Kp": np.random.uniform(low=self.Kp_min, high=self.Kp_max),
+                "Vsys": np.random.uniform(low=self.Vsys_min, high=self.Vsys_max)
             }
             if self._is_inside_simplex(d):
                 return d
