@@ -7,7 +7,7 @@ def make_data(args):
     """Make data dictionary for HD 189"""
     mass_MJ = 1.142
     radius_RJ = 1.138
-    gravity_SI = 20.90 
+    gravity_SI = 23.970
     Rs_Rsun = 0.805
     inc = 85.71
     t0 = 2454037.612
@@ -15,9 +15,9 @@ def make_data(args):
     orb_per = 2.21857567 #in days
     ecc = 0.0
     w_peri = 90.0  # longiutude of periastron
-    limbdark = "nonlinear"
+    limbdark = "linear"
     
-    u_limbdark = [0.7422,-0.4298,0.5875,-0.2645] 
+    u_limbdark = [0.35] 
     
     dates = np.array([2458383.77056, 2458383.77385, 2458383.77708, 2458383.7803 ,
        2458383.78359, 2458383.78681, 2458383.79004, 2458383.79327,
@@ -55,7 +55,7 @@ def make_data(args):
         [2291.13241816, 2363.23089778],[2362.76594321, 2437.09976036],\
         [2438.98829255, 2515.71176047]])
     
-    orders = [9,10,16,17,18,20,21,31,32,33,34]
+    orders = [8,9,16,17,18,20,21,31,32,33,34]
         
     Vfiles = ["Vcorr8.txt",
               "Vcorr9.txt",
