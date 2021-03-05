@@ -112,7 +112,7 @@ class Model(object):
                    # self.MMR_CO/28.0)*np.ones_like(temperature)
         freq_nm = []
         radius_transm_cm = []
-        for i in len(self.atmospheres):
+        for i in range(len(self.atmospheres)):
             atmo = self.atmospheres[i]
             atmo.calc_transm(temperature, self.abundances, self.gravity, MMW, R_pl=self.radius, P0_bar=self.P0)
         
