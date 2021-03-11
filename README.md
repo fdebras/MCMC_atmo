@@ -1,7 +1,7 @@
 # MCMC_atmo
-Emcee based code to study planetary atmospheres. Thus far, the models are based on petitRADTRANS (https://petitradtrans.readthedocs.io/en/latest/index.html)
+Parallel emcee-based code to study planetary atmospheres. 
 
-Python module needed: dill, schwimmbad, emcee, json, runpy, numpy, corner,  mpi4py, lmfit.
+Python modules needed: dill, schwimmbad, emcee, json, runpy, numpy, corner,  mpi4py, lmfit. Thus far, the models are based on petitRADTRANS (https://petitradtrans.readthedocs.io/en/latest/index.html)
 
 The code creates a posterior class for every walker of the MCMC algorithm, that contains a model, a prior and a likelihood. 
 
