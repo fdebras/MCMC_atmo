@@ -37,7 +37,7 @@ def reduce(model_dic,R_s,lambdas,orders):
 	factor = 0.0005
 
 
-	MOD = mod_func.reduced(model_dic,R_s,lambdas,orders)
+	MOD = mod_func.reduced(model_dic,R_s,orders)
 	MOD.list_ord = orders
 	MOD.orders_models()
 
