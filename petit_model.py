@@ -33,7 +33,10 @@ class Model(object):
         self.limbdark = config_dict["limbdark"]
         self.u_limbdark = config_dict["u_limbdark"]
         self.dates = config_dict["dates"]
+        
+        self.Wmean = config_dict["Wmean"]
         self.lambdas = config_dict["lambdas"]
+        self.orderstot = config_dict["orderstot"]
         self.orders = config_dict["orders"]
         
         self.Vfiles =config_dict["Vfiles"]
@@ -43,6 +46,7 @@ class Model(object):
         self.gamma = config_dict["gamma"]
         self.T_int = config_dict["T_int"]
         self.T_eq = config_dict["T_eq"]
+        self.num_transit= config_dict["num_transit"]
         # self.MMR_H2O = config_dict["MMR_H2O"]
         # self.MMR_CO2 = config_dict["MMR_CO2"]
         # self.MMR_CO = config_dict["MMR_CO"]
@@ -56,8 +60,7 @@ class Model(object):
         self.atmospheres= []
         self.pressures=np.logspace(self.p_minbar,self.p_maxbar,self.n_pressure)
         
-        for i in self.orders: 
-            print(self.lambdas[i])
+        for i in self.orderstot: 
             atmosphere = Radtrans(line_species = ['H2O_main_iso'], \
 		  rayleigh_species = ['H2', 'He'], \
 		  continuum_opacities = ['H2-H2'], \
@@ -128,7 +131,7 @@ class Model(object):
     
     def data_and_model(self,reduced_dic,para_dic):
         return prep.data_and_model_dict(reduced_dic,para_dic,self.radius,self.Rs,self.inc,self.t0,self.sma,self.orb_per,self.w_peri,self.ecc,
-                              self.limbdark,self.u_limbdark,self.dates,self.Vfiles,self.Ifiles)
+                              self.limbdark,self.u_limbdark,self.dates,self.Vfiles,self.Ifiles,self.num_transit,self.orders,self.Wmean)
 
 
     def prepare_likelihood(self,para_dic):

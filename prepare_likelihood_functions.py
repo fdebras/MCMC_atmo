@@ -24,10 +24,18 @@ class Model_2D:
     def __init__(self,reduced_dic):
         
         
-        
-        self.Vm = reduced_dic["velocity"]
+        self.nord = reduced_dic["nord"]
+        self.Wm = reduced_dic["wavelength"]
         self.absor = reduced_dic["absorption"]
         self.Fm = []
+
+    def create_interp(self):
+        """
+        Create a 2D sequence template
+        Interpolate each template         
+        """
+        
+        self.Fm = interpolate.interp1d(self.Wm,self.absor,kind='linear')
 
     
     def build_model(self,window):
@@ -130,23 +138,35 @@ class total_model:
     """
 
     
-    def __init__(self,Kp,Vsys,models):
+    def __init__(self,Kp,Vsys,orders,Wmean,models,Vfiles,Ifiles,Planet,ddv):
         
         
-        self.planet = ""   ## Planet object
+        self.planet = Planet   ## Planet object
+        self.orders = orders
+        self.Wmean = Wmean
         self.models  = models   ## Model object
         
-        self.Vfiles = []
-        self.Ifiles = []
+        self.Vfiles = Vfiles
+        self.Ifiles = Ifiles
         
         self.Kp  = Kp  ## Values of semi-amplitude of the planet orbit for parameter search (1D vector)
         self.Vsys = Vsys   ## Values of radial velocity at mid-transit for parameter search (1D vector)
-        self.V0_ccf = []   ## Values of RV used to cross-correl the template spectrum to each of spectrum of the reduced sequence
-        self.ddv    = []   ## Vector of velocity used for the integration of the model when binned into the data sampling scheme
+        self.ddv    = ddv  ## Vector of velocity used for the integration of the model when binned into the data sampling scheme
                            ## We generally center it on 0 with half width of 1 SPIRou pixel (i.e. ~2 km/s)  
         
         self.corrcoeff = 0
-        self.model2D=  []      
+        
+    def fill_model(self):
+        """
+        Only keep the models that are needed for a given transit
+        """
+        
+        true_mod = []
+        for i in range(len(self.orders)):
+            for j in range(len(self.models)):
+                if self.orders[i] == self.models[j].nb:
+                    true_mod.append(self.models[j])
+        self.models = true_mod      
 
     def bin_model(self):
 
@@ -167,13 +187,13 @@ class total_model:
 
 
         num_spectra = len(self.planet.date)
-        num_ords = len(self.models)
         
         data_ret = []
         model_ret = []  ### Init binned sequence of spectra
         
         
-        for i in range(num_ords):
+        c0      = 29979245800.0e-5
+        for i in range(len(self.orders)):
             V_data =  np.loadtxt(self.Vfiles[i])
             I_data = np.loadtxt(self.Ifiles[i])
             for n in range(num_spectra):
@@ -183,7 +203,7 @@ class total_model:
     
     			### For dd in the window centered on 0 and of 1 px width (here 2 km/s)
                     for dd in self.ddv:
-                        I_tmp += self.models[i].Fm[n](V_data[n]+dd-DVP[n]) 
+                        I_tmp += self.models[i].Fm(((V_data[n]+dd-DVP[n])/c0+1)*self.Wmean[i])*self.planet.window[n] 
                     I_tmp = I_tmp/len(self.ddv)### Average values to be closer to measured values
                     I_tmp -= np.mean(I_tmp)
                     model_ret.append(I_tmp)
@@ -197,7 +217,9 @@ class total_model:
         return model_ret,data_ret ### Binned modelled sequence shifted at (kp,v0)
 
 
-
+        # 
+        # V_mod   = c0*(self.Wm/self.W_mean-1)
+        # self.Vm = V_mod 
 
     # def make_corr(self,V_data,I_data):
 

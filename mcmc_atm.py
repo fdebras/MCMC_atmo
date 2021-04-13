@@ -48,8 +48,9 @@ likelihood_factories = {
     #     lhood.MultistudentMomentsLikelihood(make_corr_matrix(args), args.Jmax, args.nu),
     # ),
     "brogi": lambda args: lhood.FullLikelihood(
-        lhood.BrogiLikelihood(),
-    )   
+        lhood.BrogiLikelihood()),
+    "Gibbson": lambda args: lhood.FullLikelihood(
+        lhood.GibbsonLikelihood())
 }
 
 
@@ -180,11 +181,14 @@ config = dict(
     u_limbdark = planet_data["u_limbdark"],
     dates = planet_data["dates"],
     #the limit of the SPIRou orders
+    wmean = planet_data["Wmean"],
 	lambdas = planet_data["lambdas"],
     orders = planet_data["orders"],
+    orderstot = planet_data["orderstot"],
 	#file with the reduced  datas
 	Vfiles = planet_data["Vfiles"],
 	Ifiles = planet_data["Ifiles"],
+    num_transit = planet_data["num_transit"],
 )
 config.update(unprior)
 # Posterior and model ==============================================================================

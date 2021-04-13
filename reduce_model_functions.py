@@ -63,15 +63,13 @@ def norm_pts(n_points,Wm,Im,N_bor):
 
 class reduced_order:
     
-    def __init__(self,nb,lamb_lim,Wm,Rp,R_s):
+    def __init__(self,nb,Wm,Rp,R_s):
         
         self.nb = nb
         self.Wm          = Wm # wavelength model
         self.Rp          = Rp
         self.Vm          = [] # velocity model
-        self.lamb_lim    = lamb_lim  ## limits of the SPIRou orders !!!!!! different from model limits
         self.DD          = []   ## 1D vector -- Rp as fct of Wm
-        self.W_mean      = 0.5*(lamb_lim[0]+lamb_lim[1])  ## WARNING -- must be consistent with that used in data
         
         self.R_s = R_s
         self.models = []
@@ -99,16 +97,17 @@ class reduced_order:
         DD  = DF-I_fin#DF*DF/I_fin
         DD -= np.percentile(DD,99)
 
-        self.DD = DD    
+        self.DD = DD   
         
-        c0      = 29979245800.0e-5
-        V_mod   = c0*(self.Wm/self.W_mean-1)
-        self.Vm = V_mod 
+        
+        # c0      = 29979245800.0e-5
+        # V_mod   = c0*(self.Wm/self.W_mean-1)
+        # self.Vm = V_mod 
 
         
 class reduced:
     
-    def __init__(self,model_dic,R_s,lambdas,orders):
+    def __init__(self,model_dic,R_s,orders):
 
         self.list_ord  = orders  ## List of orders to be used -- after preselection
         self.list_name = []  ## List of the names of the observations
@@ -116,7 +115,6 @@ class reduced:
         self.Wm = model_dic["freq_nm"]
         self.Rp = model_dic["radius_transm_cm"]
         self.R_s = R_s
-        self.lambdas = lambdas #limits of the spirou orders
         
         
         self.models  = []
@@ -131,7 +129,7 @@ class reduced:
             ### First we have to select only the portion of  the model that is of interest for us
             # limits = [self.lambdas[no][0]*0.995,self.lambdas[no][1]*1.005]
             no = self.list_ord[i]
-            M  = reduced_order(no,self.lambdas[no],self.Wm[i],self.Rp[i],self.R_s)
+            M  = reduced_order(no,self.Wm[i],self.Rp[i],self.R_s)
             self.models.append(M)
         
 
