@@ -164,12 +164,14 @@ def make_data(args):
 		orb_per = orb_per,
 		ecc = ecc,
 		w_peri = w_peri,
+        Wmean = Wmean,
 		limbdark = limbdark,
 		u_limbdark = u_limbdark,
 		dates = dates,
 		lambdas = lambdas,
         orders = orders,
         orderstot=orderstot,
+        num_transit=num_transit,
 		Vfiles = Vfiles,
 		Ifiles = Ifiles
 		    )

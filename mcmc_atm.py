@@ -181,7 +181,7 @@ config = dict(
     u_limbdark = planet_data["u_limbdark"],
     dates = planet_data["dates"],
     #the limit of the SPIRou orders
-    wmean = planet_data["Wmean"],
+    Wmean = planet_data["Wmean"],
 	lambdas = planet_data["lambdas"],
     orders = planet_data["orders"],
     orderstot = planet_data["orderstot"],
