@@ -154,8 +154,8 @@ class SimplexUniformT_Priors(object):
 class SimplexUniformAbund_Priors(object):
     params = [
         "MMR_H2O",
-        "MMR_CO",
-        "MMR_CO2",
+        # "MMR_CO",
+        # "MMR_CO2",
     ]
 
     def __init__(self, H2O_min=-8.0, H2O_max=-2.0):
