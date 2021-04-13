@@ -126,7 +126,7 @@ class Model(object):
         }
     
     def reduce_model(self, model_dic): #renormalizes the atmospheric mode  
-        return red.reduce(model_dic,self.Rs,self.lambdas,self.orders)
+        return red.reduce(model_dic,self.Rs,self.lambdas,self.orderstot)
     
     
     def data_and_model(self,reduced_dic,para_dic):
