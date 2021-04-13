@@ -164,7 +164,7 @@ class total_model:
         true_mod = []
         for i in range(len(self.orders)):
             for j in range(len(self.models)):
-                if self.orders[i] == self.models[j].nb:
+                if self.orders[i] == self.models[j].nord:
                     true_mod.append(self.models[j])
         self.models = true_mod      
 
