@@ -107,9 +107,9 @@ class reduced_order:
         
 class reduced:
     
-    def __init__(self,model_dic,R_s,orders):
+    def __init__(self,model_dic,R_s,orderstot):
 
-        self.list_ord  = orders  ## List of orders to be used -- after preselection
+        self.list_ord  = orderstot  ## List of orders to be used -- after preselection
         self.list_name = []  ## List of the names of the observations
         
         self.Wm = model_dic["freq_nm"]
@@ -125,7 +125,7 @@ class reduced:
      
             
     def orders_models(self):  
-        for i in range(len(self.Wm)):   
+        for i in range(len(self.list_ord)):   
             ### First we have to select only the portion of  the model that is of interest for us
             # limits = [self.lambdas[no][0]*0.995,self.lambdas[no][1]*1.005]
             no = self.list_ord[i]

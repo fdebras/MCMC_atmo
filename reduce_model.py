@@ -23,7 +23,7 @@ import batman
 
 
 
-def reduce(model_dic,R_s,lambdas,orders):
+def reduce(model_dic,R_s,lambdas,orderstot):
 
 
 	### Technical parameters for the model
@@ -37,8 +37,7 @@ def reduce(model_dic,R_s,lambdas,orders):
 	factor = 0.0005
 
 
-	MOD = mod_func.reduced(model_dic,R_s,orders)
-	MOD.list_ord = orders
+	MOD = mod_func.reduced(model_dic,R_s,orderstot)
 	MOD.orders_models()
 
 	MOD.make_all(n_per,bin_d,n_bin)
