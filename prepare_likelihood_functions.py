@@ -82,7 +82,7 @@ class Planet:
         self.ld    = limbdark   ## limb darkening model -- batman
         self.u     = u_limbdark   ## factors for limb darkening
         
-        self.date   = dates   ## Phase vector
+        self.date   = np.array(dates)   ## Phase vector
         self.batman = ""   ## Batman transit model
         self.flux   = []   ## Normalized light curve
         self.window = []   ## Window function from transit curve
