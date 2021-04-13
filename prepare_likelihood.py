@@ -53,7 +53,7 @@ dates,Vfiles,Ifiles,num_transit,orders,Wmean):
     final_data = []
     for i in range(num_transit):
         tot_indiv = prep_func.total_model(para_dic["Kp"],para_dic["Vsys"],orders[i],Wmean[i],mod_2D,Vfiles[i],Ifiles[i],P[i],ddv)
-        tot_indiv.fill_models()
+        tot_indiv.fill_model()
         indiv_model,indiv_data = tot_indiv.bin_model()
         final_model = final_model+indiv_model # concatenate the models to have a list of spectra
         final_data = final_data+indiv_data # same here for the data
