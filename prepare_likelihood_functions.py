@@ -194,6 +194,7 @@ class total_model:
         
         c0      = 29979245800.0e-5
         for i in range(len(self.orders)):
+            print(self.Wmean[i])
             V_data =  np.loadtxt(self.Vfiles[i])
             I_data = np.loadtxt(self.Ifiles[i])
             for n in range(num_spectra):
