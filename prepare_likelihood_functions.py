@@ -204,8 +204,7 @@ class total_model:
     
     			### For dd in the window centered on 0 and of 1 px width (here 2 km/s)
                     for dd in self.ddv:
-                        # I_tmp += self.models[i].Fm(((V_data[n]+dd-DVP[n])/c0+1)*self.Wmean[i])*self.planet.window[n] 
-                        I_tmp += self.models[i].Fm(((V_data[n]+dd])/c0+1)*self.Wmean[i])*self.planet.window[n] 
+                        I_tmp += self.models[i].Fm(((dd-DVP[n])/c0+1)*self.Wmean[i])*self.planet.window[n] 
                     I_tmp = I_tmp/len(self.ddv)### Average values to be closer to measured values
                     I_tmp -= np.mean(I_tmp)
                     model_ret.append(I_tmp)
