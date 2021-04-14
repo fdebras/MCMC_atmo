@@ -23,7 +23,7 @@ import batman
 
 
 
-def reduce(model_dic,R_s,lambdas,orderstot):
+def reduce(model_dic,R_s,orderstot):
 
 
 	### Technical parameters for the model
