@@ -74,9 +74,9 @@ class Model(object):
     def compute_petit(self, para_dic): # creates an atmospheric model    
         # temperature=nc.guillot_global(self.pressures, 10.0**para_dic["kappa_IR"], \
 # 		10.0**para_dic["gamma"], self.gravity, para_dic["T_int"], para_dic["T_eq"])
-        # temperature=nc.guillot_global(self.pressures, self.kappa_IR, \
-# 		self.gamma, self.gravity, self.T_int, self.T_eq)
-        temperature = self.T_eq*np.ones_like(self.pressures)
+        temperature=nc.guillot_global(self.pressures, self.kappa_IR, \
+		self.gamma, self.gravity, self.T_int, self.T_eq)
+        # temperature = self.T_eq*np.ones_like(self.pressures)
 		
         Z= 10.0**para_dic["MMR_H2O"]#+10.0**para_dic["MMR_CO2"]+10.0**para_dic["MMR_CO"]
         # Z= self.MMR_H2O+self.MMR_CO2+self.MMR_CO
