@@ -198,7 +198,7 @@ class total_model:
             V_data =  np.loadtxt(self.Vfiles[i])
             I_data = np.loadtxt(self.Ifiles[i])
             for n in range(num_spectra):
-                # print(n)
+
                 if (self.planet.window[n] > 0):
                     I_tmp= np.zeros(len(V_data[0]))
                     data_tmp = np.zeros(len(V_data[0]))
@@ -209,12 +209,14 @@ class total_model:
                         I_tmp += self.models[i].Fm(((V_data[n]+dd-DVP[n])/c0+1)*self.Wmean[i])*self.planet.window[n] 
                     I_tmp = I_tmp/len(self.ddv)### Average values to be closer to measured values
                     I_tmp -= np.mean(I_tmp)
+                    np.savetxt("lol"+str(n)+".txt",I_tmp)
                     model_ret.append(I_tmp)
                     
                     data_tmp =  I_data[n]
                     data_tmp -= np.mean(data_tmp)
                     data_ret.append(data_tmp)
         # np.savetxt("lol.txt",I_ret)
+        
         
         
         return model_ret,data_ret ### Binned modelled sequence shifted at (kp,v0)

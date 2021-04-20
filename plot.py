@@ -28,13 +28,12 @@ args = parser.parse_args()
 s, lp = samples.read_safe(args.h5file)
 n, nwalkers, ndim = s.shape
 print(ndim)
-#theta_min_fid_max = samples.pack_theta(
-#    {p: min_fid_max for p, min_fid_max in json.load(open("saturn.json", "r")).items()}
-#)
-#theta0 = [p_fid for (_, p_fid, _) in theta_min_fid_max]
-#ranges = [(p_min, p_max) for (p_min, _, p_max) in theta_min_fid_max]
 
-#nskip = 3 * (n // 4)
+
+prout = np.where(s[:,:,1]<200)
+ss = s[prout]
+
+# nskip = 3 * (n // 4)
 nskip = 600
 if args.corner is not None:
 	rng = samples.pack_theta({
@@ -56,8 +55,10 @@ if args.corner is not None:
     #rng = ndim * [0.98]
     # rng[0] = (0.0, 0.25)
 
-	corner.corner(
-        s[nskip:, :, :].reshape((-1, ndim)),
+	corner.corner(ss,
+        # s[nskip:, :, :].reshape((-1, ndim)),
+        quantiles=[0.16, 0.5, 0.84],
+        show_titles=True,
         range=rng, 
         plot_datapoints=True,
         smooth=0.8,

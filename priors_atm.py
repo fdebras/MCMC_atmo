@@ -158,7 +158,7 @@ class SimplexUniformAbund_Priors(object):
         # "MMR_CO2",
     ]
 
-    def __init__(self, H2O_min=-8.0, H2O_max=-2.0):
+    def __init__(self, H2O_min, H2O_max):
     # , CO2_min=-8.0, CO2_max=-2.0,CO_min=-8.0, CO_max=-2.0):
 
         self.H2O_min = H2O_min
@@ -205,8 +205,8 @@ class SimplexUniformTransit_Priors(object):
         "Vsys"
     ]
 
-    def __init__(self, Kp_min=100,Kp_max=300, \
-    Vsys_min=-20.0,Vsys_max=20.0):
+    def __init__(self, Kp_min,Kp_max, \
+    Vsys_min,Vsys_max):
         self.Kp_min = Kp_min
         self.Kp_max = Kp_max
         

@@ -20,6 +20,7 @@ from astropy.modeling import models, fitting, polynomial
 
 import reduce_model_functions as mod_func
 import batman
+import matplotlib.pyplot as plt
 
 
 
@@ -40,7 +41,8 @@ def reduce(model_dic,R_s,orderstot):
 	MOD = mod_func.reduced(model_dic,R_s,orderstot)
 	MOD.orders_models()
 
-	MOD.make_all(n_per,bin_d,n_bin)
+	MOD.make_all(n_per,bin_d,n_bin)  
+    
 
 	return {
             "models": MOD.models

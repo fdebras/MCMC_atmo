@@ -18,6 +18,8 @@ import prepare_likelihood_functions as prep_func
 def data_and_model_dict(reduced_dic,para_dic,Rp,Rs,inc,t0,sma,orb_per,w_peri,ecc,limbdark,u_limbdark, \
 dates,Vfiles,Ifiles,num_transit,orders,Wmean):
 
+    
+    
     mod_2D = []
     for mod in reduced_dic["models"]:
         mod_dic = dict(nord=mod.nb,wavelength=mod.Wm,absorption=mod.DD)
@@ -56,8 +58,7 @@ dates,Vfiles,Ifiles,num_transit,orders,Wmean):
         tot_indiv.fill_model()
         indiv_model,indiv_data = tot_indiv.bin_model()
         final_model = final_model+indiv_model # concatenate the models to have a list of spectra
-        final_data = final_data+indiv_data # same here for the data
-
+        final_data = final_data+indiv_data # same here for the data    
     return {
 			"data": final_data,
             "model": final_model

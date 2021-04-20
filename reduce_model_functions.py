@@ -18,6 +18,7 @@ from astropy.stats import sigma_clip
 from astropy.modeling import models, fitting, polynomial
 
 import batman
+import matplotlib.pyplot as plt
 
 
 
@@ -58,6 +59,7 @@ def norm_pts(n_points,Wm,Im,N_bor):
     ### Divide by the smooth function
     I_nor  = Im - I_pred_test
     I_nor -= np.max(I_nor)
+    plt.figure()
     return I_nor, I_pred_test, W_bin, I_bin
 
 
@@ -68,14 +70,13 @@ class reduced_order:
         self.nb = nb
         self.Wm          = Wm # wavelength model
         self.Rp          = Rp
-        self.Vm          = [] # velocity model
         self.DD          = []   ## 1D vector -- Rp as fct of Wm
         
         self.R_s = R_s
         self.models = []
         
         
-    def read_adjust_model(self,n_per=5,bin_d=0,n_bin=0):
+    def read_adjust_model(self,n_per,bin_d,n_bin):
 ##### TO IMPROVE
 
 
@@ -94,9 +95,9 @@ class reduced_order:
         I_nor, I_pred_test, W_bin, I_bin = norm_pts(n_points,W_tmp,I_tmp,N_bor)
         f = interpolate.interp1d(W_tmp,I_pred_test,kind="linear",fill_value="extrapolate")
         I_fin = f(self.Wm)
-        DD  = DF-I_fin#DF*DF/I_fin
-        DD -= np.percentile(DD,99)
-
+        #DD  = DF-I_fin#
+        DD= DF*DF/I_fin
+        DD -= np.max(DD)
         self.DD = DD   
         
         
@@ -119,8 +120,7 @@ class reduced:
         
         self.models  = []
         self.N_ord   = 0
-        
-        self.make_tp = 0
+
 
      
             
@@ -134,7 +134,7 @@ class reduced:
         
 
         
-    def make_all(self,n_per,make_tp=0,bin_d=0,n_bin=0):
+    def make_all(self,n_per,bin_d,n_bin):
         for M in self.models:                        
             M.read_adjust_model(n_per,bin_d,n_bin)
             

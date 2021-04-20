@@ -139,7 +139,7 @@ if args.enable_diff_rotation:
 unprior = dict( kappa_IR=0.01,
         gamma=0.012,
         T_int=200,
-        T_eq=1100,
+        T_eq=1000,
         MMR_H2O=0.001,
         MMR_CO=0.0,
         MMR_CO2=0.0,)
@@ -166,8 +166,6 @@ config = dict(
     radius_RJ=planet_data["radius_RJ"],
     Rs_Rsun = planet_data["Rs_Rsun"],
     gravity_SI= planet_data["gravity_SI"],
-    wlen_min = 1.6,
-    wlen_max = 1.7,
     P0_bar = 0.1,
     HHe_ratio=0.275,  # solar ratio
     #now the transit parameters

@@ -8,7 +8,7 @@ def make_prior(args):
     # T_eq_min=800.0,T_eq_max=1500.0),
         priors_atm.SimplexUniformAbund_Priors(H2O_min=-8.0, H2O_max=-2.0),
     # , CO2_min=-8.0, CO2_max=-2.0,CO_min=-8.0, CO_max=-2.0),
-        priors_atm.SimplexUniformTransit_Priors(Kp_min=100,Kp_max=300, \
+        priors_atm.SimplexUniformTransit_Priors(Kp_min=100.0,Kp_max=300.0, \
     Vsys_min=-20.0,Vsys_max=20.0)
         
     ]

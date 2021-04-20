@@ -19,8 +19,6 @@ class Model(object):
         self.radius=config_dict["radius_RJ"]*nc.r_jup_mean
         self.Rs=config_dict["Rs_Rsun"]*7.0e10
         self.gravity=config_dict["gravity_SI"]*100.0
-        self.wlen_min=config_dict["wlen_min"]
-        self.wlen_max=config_dict["wlen_max"]
         self.HHe_ratio=config_dict["HHe_ratio"]
 		
 		#now the transit
@@ -76,8 +74,9 @@ class Model(object):
     def compute_petit(self, para_dic): # creates an atmospheric model    
         # temperature=nc.guillot_global(self.pressures, 10.0**para_dic["kappa_IR"], \
 # 		10.0**para_dic["gamma"], self.gravity, para_dic["T_int"], para_dic["T_eq"])
-        temperature=nc.guillot_global(self.pressures, self.kappa_IR, \
-		self.gamma, self.gravity, self.T_int, self.T_eq)
+        # temperature=nc.guillot_global(self.pressures, self.kappa_IR, \
+# 		self.gamma, self.gravity, self.T_int, self.T_eq)
+        temperature = self.T_eq*np.ones_like(self.pressures)
 		
         Z= 10.0**para_dic["MMR_H2O"]#+10.0**para_dic["MMR_CO2"]+10.0**para_dic["MMR_CO"]
         # Z= self.MMR_H2O+self.MMR_CO2+self.MMR_CO
@@ -92,6 +91,7 @@ class Model(object):
         self.abundances['H2'] = MMR_H2* np.ones_like(temperature)
         
         self.abundances['He'] = MMR_He * np.ones_like(temperature)
+        
         self.abundances['H2O_main_iso'] = 10.0**para_dic["MMR_H2O"] * np.ones_like(temperature)
         # self.abundances['CO2_main_iso'] = 10.0**para_dic["MMR_CO2"] * np.ones_like(temperature)
         # self.abundances['CO_main_iso'] = 10.0**para_dic["MMR_CO"] * np.ones_like(temperature)
@@ -106,7 +106,6 @@ class Model(object):
         MMW = 1.0/(MMR_H2/2.0+MMR_He/4.0+10.0**para_dic["MMR_H2O"]/18.0)*np.ones_like(temperature)
                     # 10.0**para_dic["MMR_CO2"]/48.0 + 
                     # 10.0**para_dic["MMR_CO"]/28.0)
-        
 
 
         # MMW = 1.0/(MMR_H2/2.0+MMR_He/4.0+self.MMR_H2O/18.0+
