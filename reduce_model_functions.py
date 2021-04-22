@@ -82,22 +82,25 @@ class reduced_order:
 
         DF   = -1.0* self.Rp**(2)/self.R_s**(2)
 
-### Get the enveloppe of the distribution
-        n_points = n_bin
-        N_bor    = 50
+### Get the enveloppe of the distribution#
+#        n_points = n_bin
+#        N_bor    = 50
 		
 		### Remove 50% of lowest data pts to get the enveloppe
-        I_per = np.percentile(DF,50)
-        I_tmp = DF[np.where(DF>I_per)]
-        W_tmp = self.Wm[np.where(DF>I_per)]
+#        I_per = np.percentile(DF,50)
+#        I_tmp = DF[np.where(DF>I_per)]
+#        W_tmp = self.Wm[np.where(DF>I_per)]
 
         
-        I_nor, I_pred_test, W_bin, I_bin = norm_pts(n_points,W_tmp,I_tmp,N_bor)
-        f = interpolate.interp1d(W_tmp,I_pred_test,kind="linear",fill_value="extrapolate")
-        I_fin = f(self.Wm)
+#        I_nor, I_pred_test, W_bin, I_bin = norm_pts(n_points,W_tmp,I_tmp,N_bor)
+#        f = interpolate.interp1d(W_tmp,I_pred_test,kind="linear",fill_value="extrapolate")
+#        I_fin = f(self.Wm)
         #DD  = DF-I_fin#
-        DD= DF*DF/I_fin
-        DD -= np.max(DD)
+#        DD= DF*DF/I_fin
+#        DD -= np.max(DD)
+        DD = DF
+        DD -= np.percentile(DD,99)
+
         self.DD = DD   
         
         
