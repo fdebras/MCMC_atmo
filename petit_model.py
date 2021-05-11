@@ -39,6 +39,10 @@ class Model(object):
         
         self.Vfiles =config_dict["Vfiles"]
         self.Ifiles =config_dict["Ifiles"]
+        self.Stdfiles =config_dict["Stdfiles"]
+        
+        if not self.Stdfiles:
+            self.Stdfiles = config_dict["Ifiles"]
         
         self.kappa_IR = config_dict["kappa_IR"]
         self.gamma = config_dict["gamma"]
@@ -130,7 +134,7 @@ class Model(object):
     
     def data_and_model(self,reduced_dic,para_dic):
         return prep.data_and_model_dict(reduced_dic,para_dic,self.radius,self.Rs,self.inc,self.t0,self.sma,self.orb_per,self.w_peri,self.ecc,
-                              self.limbdark,self.u_limbdark,self.dates,self.Vfiles,self.Ifiles,self.num_transit,self.orders,self.Wmean)
+                              self.limbdark,self.u_limbdark,self.dates,self.Vfiles,self.Ifiles,self.Stdfiles,self.num_transit,self.orders,self.Wmean)
 
 
     def prepare_likelihood(self,para_dic):

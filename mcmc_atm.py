@@ -49,8 +49,8 @@ likelihood_factories = {
     # ),
     "brogi": lambda args: lhood.FullLikelihood(
         lhood.BrogiLikelihood()),
-    "Gibbson": lambda args: lhood.FullLikelihood(
-        lhood.GibbsonLikelihood())
+    "Gibson": lambda args: lhood.FullLikelihood(
+        lhood.GibsonLikelihood())
 }
 
 
@@ -113,7 +113,7 @@ def parse_cmdline_args():
     mpi_print(args)
     return args
 
-
+global args
 args = parse_cmdline_args()
 
 # Find out what parameters we're running with ======================================================
@@ -186,6 +186,7 @@ config = dict(
 	#file with the reduced  datas
 	Vfiles = planet_data["Vfiles"],
 	Ifiles = planet_data["Ifiles"],
+    Stdfiles = planet_data["Stdfiles"],
     num_transit = planet_data["num_transit"],
 )
 config.update(unprior)
