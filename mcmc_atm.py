@@ -120,7 +120,7 @@ args = parse_cmdline_args()
 
 param_names = [
         "MMR_H2O",
-        "MMR_CO",
+        # "MMR_CO",
         # "MMR_CO2",
         "Kp",
         "Vsys",
