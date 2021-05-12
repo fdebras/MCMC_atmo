@@ -119,8 +119,9 @@ args = parse_cmdline_args()
 # Find out what parameters we're running with ======================================================
 
 param_names = [
+        "T_eq",
         "MMR_H2O",
-        # "MMR_CO",
+        "MMR_CO",
         # "MMR_CO2",
         "Kp",
         "Vsys",

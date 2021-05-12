@@ -97,25 +97,25 @@ class SimplexZonesPrior(object):
 
 
 class SimplexUniformT_Priors(object):
-    params = [
-        "kappa_IR",
-        "gamma",
-        "T_int",
-        "T_eq",
+    params = ["T_eq",
+#        "kappa_IR",
+#        "gamma",
+#        "T_int",
+#        "T_eq",
     ]
 
-    def __init__(self, kappa_min=-5.0, kappa_max=-2.0, gamma_min=-2.0,gamma_max=2.0,T_int_min=0.0,T_int_max=500.0, \
-    T_eq_min=800.0,T_eq_max=2500.0):
+    def __init__(self, T_eq_min,T_eq_max):#kappa_min=-5.0, kappa_max=-2.0, gamma_min=-2.0,gamma_max=2.0,T_int_min=0.0,T_int_max=500.0, \
+#    T_eq_min=800.0,T_eq_max=2500.0):
     
-        self.kappa_min = kappa_min
-        self.kappa_max = kappa_max
+#        self.kappa_min = kappa_min
+#        self.kappa_max = kappa_max
         
-        self.gamma_min = gamma_min
-        self.gamma_max = gamma_max
+#        self.gamma_min = gamma_min
+#        self.gamma_max = gamma_max
 
         
-        self.T_int_min = T_int_min
-        self.T_int_max = T_int_max
+#        self.T_int_min = T_int_min
+#        self.T_int_max = T_int_max
         
         self.T_eq_min = T_eq_min
         self.T_eq_max = T_eq_max
@@ -123,10 +123,11 @@ class SimplexUniformT_Priors(object):
     
 
     def _is_inside_simplex(self, d):
-        return (  self.kappa_min<d["kappa_IR"]<self.kappa_max
-                and self.gamma_min<d["gamma"]<self.gamma_max
-                and self.T_int_min<d["T_int"]<self.T_int_max
-                and self.T_eq_min<d["T_eq"]<self.T_eq_max
+        return (  self.T_eq_min<d["T_eq"]<self.T_eq_max
+#self.kappa_min<d["kappa_IR"]<self.kappa_max
+ #               and self.gamma_min<d["gamma"]<self.gamma_max
+  #              and self.T_int_min<d["T_int"]<self.T_int_max
+   #             and self.T_eq_min<d["T_eq"]<self.T_eq_max
         )
 
     def ln_prior(self, param_dict):
@@ -137,28 +138,27 @@ class SimplexUniformT_Priors(object):
 
     def rvs(self):
         while True:
-            kir = np.random.uniform(low=self.kappa_min, high=self.kappa_max)
+#            kir = np.random.uniform(low=self.kappa_min, high=self.kappa_max)
             
-            gamma = np.random.uniform(low=self.gamma_min, high=self.gamma_max)
-            d = {
-                "kappa_IR": kir,
-                "gamma": gamma,
-                "T_int": np.random.uniform(low=self.T_int_min, high=self.T_int_max),
-                "T_eq": np.random.uniform(low=self.T_eq_min, high=self.T_eq_max),
+#            gamma = np.random.uniform(low=self.gamma_min, high=self.gamma_max)
+            d = {"T_eq": np.random.uniform(low=self.T_eq_min, high=self.T_eq_max),
+#                "kappa_IR": kir,
+#                "gamma": gamma,
+#                "T_int": np.random.uniform(low=self.T_int_min, high=self.T_int_max),
+#                "T_eq": np.random.uniform(low=self.T_eq_min, high=self.T_eq_max),
             }
             if self._is_inside_simplex(d):
-                print(d["T_int"])
                 return d
 
 
 class SimplexUniformAbund_Priors(object):
     params = [
         "MMR_H2O",
-        # "MMR_CO",
+        "MMR_CO",
         # "MMR_CO2",
     ]
 
-    def __init__(self, H2O_min, H2O_max):
+    def __init__(self, H2O_min, H2O_max,CO_min,CO_max):
     # , CO2_min=-8.0, CO2_max=-2.0,CO_min=-8.0, CO_max=-2.0):
 
         self.H2O_min = H2O_min
@@ -167,15 +167,15 @@ class SimplexUniformAbund_Priors(object):
         # self.CO2_min = CO2_min
         # self.CO2_max = CO2_max
         
-        # self.CO_min = CO_min
-        # self.CO_max = CO_max
+        self.CO_min = CO_min
+        self.CO_max = CO_max
 
 
     def _is_inside_simplex(self, d):
 
         return (self.H2O_min<d["MMR_H2O"]<self.H2O_max
                 # and self.CO2_min<d["MMR_CO2"]<self.CO2_max
-                # and self.CO_min<d["MMR_CO"]<self.CO_max
+                and self.CO_min<d["MMR_CO"]<self.CO_max
         )
 
     def ln_prior(self, param_dict):
@@ -188,12 +188,12 @@ class SimplexUniformAbund_Priors(object):
         while True:
             H2O=  np.random.uniform(low=self.H2O_min, high=self.H2O_max)
             
-            # CO= np.random.uniform(low=self.CO_min, high=self.CO_max)
+            CO= np.random.uniform(low=self.CO_min, high=self.CO_max)
             
             # CO2= np.random.uniform(low=self.CO2_min, high=self.CO2_max)        
             d = {
                 "MMR_H2O": H2O,
-                # "MMR_CO": CO,
+                "MMR_CO": CO,
                 # "MMR_CO2": CO2,
             }
             if self._is_inside_simplex(d):

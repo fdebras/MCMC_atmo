@@ -63,7 +63,7 @@ class Model(object):
         self.pressures=np.logspace(self.p_minbar,self.p_maxbar,self.n_pressure)
         
         for i in self.orderstot: 
-            atmosphere = Radtrans(line_species = ['H2O_main_iso'], \
+            atmosphere = Radtrans(line_species = ['H2O_main_iso','CO_main_iso'], \
 		  rayleigh_species = ['H2', 'He'], \
 		  continuum_opacities = ['H2-H2'], \
 		  wlen_bords_micron = [self.lambdas[i][0]/1000.0*0.99,self.lambdas[i][1]/1000.0*1.01], \
@@ -78,11 +78,12 @@ class Model(object):
     def compute_petit(self, para_dic): # creates an atmospheric model    
         # temperature=nc.guillot_global(self.pressures, 10.0**para_dic["kappa_IR"], \
 # 		10.0**para_dic["gamma"], self.gravity, para_dic["T_int"], para_dic["T_eq"])
-        temperature=nc.guillot_global(self.pressures, self.kappa_IR, \
-		self.gamma, self.gravity, self.T_int, self.T_eq)
+#        temperature=nc.guillot_global(self.pressures, self.kappa_IR, \
+#		self.gamma, self.gravity, self.T_int, self.T_eq)
         # temperature = self.T_eq*np.ones_like(self.pressures)
-		
-        Z= 10.0**para_dic["MMR_H2O"]#+10.0**para_dic["MMR_CO2"]+10.0**para_dic["MMR_CO"]
+        temperature = para_dic["T_eq"]*np.ones_like(self.pressures)	
+	
+        Z= 10.0**para_dic["MMR_H2O"]+10.0**para_dic["MMR_CO"]#+10.0**para_dic["MMR_CO2"]+10.0**para_dic["MMR_CO"]
         # Z= self.MMR_H2O+self.MMR_CO2+self.MMR_CO
 
 		
@@ -98,7 +99,7 @@ class Model(object):
         
         self.abundances['H2O_main_iso'] = 10.0**para_dic["MMR_H2O"] * np.ones_like(temperature)
         # self.abundances['CO2_main_iso'] = 10.0**para_dic["MMR_CO2"] * np.ones_like(temperature)
-        # self.abundances['CO_main_iso'] = 10.0**para_dic["MMR_CO"] * np.ones_like(temperature)
+        self.abundances['CO_main_iso'] = 10.0**para_dic["MMR_CO"] * np.ones_like(temperature)
 
         # self.abundances['H2O_main_iso'] = self.MMR_H2O * np.ones_like(temperature)
         # self.abundances['CO2_main_iso'] = self.MMR_CO2 * np.ones_like(temperature)
@@ -107,7 +108,7 @@ class Model(object):
 		#MMW = (sum(Zi/mi))**-1) 
         
         
-        MMW = 1.0/(MMR_H2/2.0+MMR_He/4.0+10.0**para_dic["MMR_H2O"]/18.0)*np.ones_like(temperature)
+        MMW = 1.0/(MMR_H2/2.0+MMR_He/4.0+10.0**para_dic["MMR_H2O"]/18.0+10.0**para_dic["MMR_CO"]/28.0)*np.ones_like(temperature)
                     # 10.0**para_dic["MMR_CO2"]/48.0 + 
                     # 10.0**para_dic["MMR_CO"]/28.0)
 
