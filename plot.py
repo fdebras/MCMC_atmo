@@ -29,12 +29,13 @@ s, lp = samples.read_safe(args.h5file)
 n, nwalkers, ndim = s.shape
 print(ndim)
 
+nskip = int(3.*n/4.)
+ss = s[nskip:]
 
-prout = np.where(s[:,:,1]<200)
+prout = np.where(s[:,:,1]<300)
 ss = s[prout]
 
-# nskip = 3 * (n // 4)
-nskip = 600
+
 if args.corner is not None:
 	rng = samples.pack_theta({
 	"MMR_H2O": (-8.0, -2.0),

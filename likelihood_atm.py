@@ -28,6 +28,14 @@ class BrogiLikelihood(object):
             corrcoeff = np.corrcoef(corr["data"][i],corr["model"][i])[0,1]
             like[i]= -N/2.*((np.log(sf*sg)+np.log(sf/sg+sg/sf-2.0*corrcoeff))+1)
         return np.sum(like)
+    
+class GibsonLikelihood(object):
+    def ln_like(self,corr):
+        like = np.zeros(len(corr["data"]))
+        for i  in range(len(corr["data"])):
+            N = len(corr["data"][i])
+            like[i]= -N/2.*np.sum((corr["data"][i]-corr["model"][i])**2/corr["std"][i]**2)
+        return np.sum(like)
         
         
 class GaussianMassAbundanceLikelihood(object):

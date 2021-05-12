@@ -23,45 +23,6 @@ import matplotlib.pyplot as plt
 
 
 
-        
-def norm_pts(n_points,Wm,Im,N_bor):
-    ### Function to automatically 
-    ### 1- Bin the data at n_points
-    ### 2- Smooth the resulting data set
-    ### 3- Divide the input spectrum by the resulting envelope  
-    
-    ### Bin the data
-    W_bin = []
-    I_bin = []
-    W_lim = np.linspace(Wm[0],Wm[-1],n_points)
-    
-    W_bin.append(np.median(Wm[:N_bor]))
-    r,cl,cm = stats.sigmaclip(Im[:N_bor],3,3)
-    I_bin.append(np.median(r))
-    for k in range(n_points-1):
-        N_inf = np.argmin(np.abs(Wm - W_lim[k]))
-        N_sup = np.argmin(np.abs(Wm - W_lim[k+1]))
-        W_bin.append(np.median(Wm[N_inf:N_sup]))
-        r,cl,cm = stats.sigmaclip(Im[N_inf:N_sup],3,3)
-        I_bin.append(np.median(r))
-    W_bin.append(np.median(Wm[-N_bor:]))
-    r,cl,cm = stats.sigmaclip(Im[-N_bor:],3,3)
-    I_bin.append(np.median(r))
-    
-    W_bin,I_bin = np.array(W_bin,dtype=float),np.array(I_bin,dtype=float)
-    
-    ### Interpolate the binned data using a smooth function
-    
-    #test = interpolate.splrep(W_bin,I_bin,s=0)
-    #I_pred_test = interpolate.splev(Wm,test,der=0)
-    test = interpolate.interp1d(W_bin,I_bin,kind="linear",fill_value="extrapolate")
-    I_pred_test = test(Wm)
-    ### Divide by the smooth function
-    I_nor  = Im - I_pred_test
-    I_nor -= np.max(I_nor)
-    plt.figure()
-    return I_nor, I_pred_test, W_bin, I_bin
-
 
 class reduced_order:
     
@@ -82,24 +43,10 @@ class reduced_order:
 
         DF   = -1.0* self.Rp**(2)/self.R_s**(2)
 
-### Get the enveloppe of the distribution#
-#        n_points = n_bin
-#        N_bor    = 50
-		
-		### Remove 50% of lowest data pts to get the enveloppe
-#        I_per = np.percentile(DF,50)
-#        I_tmp = DF[np.where(DF>I_per)]
-#        W_tmp = self.Wm[np.where(DF>I_per)]
 
-        
-#        I_nor, I_pred_test, W_bin, I_bin = norm_pts(n_points,W_tmp,I_tmp,N_bor)
-#        f = interpolate.interp1d(W_tmp,I_pred_test,kind="linear",fill_value="extrapolate")
-#        I_fin = f(self.Wm)
-        #DD  = DF-I_fin#
-#        DD= DF*DF/I_fin
-#        DD -= np.max(DD)
         DD = DF
         DD -= np.percentile(DD,99)
+
 
         self.DD = DD   
         

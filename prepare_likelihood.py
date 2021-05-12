@@ -16,7 +16,7 @@ import prepare_likelihood_functions as prep_func
 
 
 def data_and_model_dict(reduced_dic,para_dic,Rp,Rs,inc,t0,sma,orb_per,w_peri,ecc,limbdark,u_limbdark, \
-dates,Vfiles,Ifiles,num_transit,orders,Wmean):
+dates,Vfiles,Ifiles,Stdfiles,num_transit,orders,Wmean):
 
     
     
@@ -53,13 +53,16 @@ dates,Vfiles,Ifiles,num_transit,orders,Wmean):
     
     final_model = []
     final_data = []
+    final_std = []
     for i in range(num_transit):
-        tot_indiv = prep_func.total_model(para_dic["Kp"],para_dic["Vsys"],orders[i],Wmean[i],mod_2D,Vfiles[i],Ifiles[i],P[i],ddv)
+        tot_indiv = prep_func.total_model(para_dic["Kp"],para_dic["Vsys"],orders[i],Wmean[i],mod_2D,Vfiles[i],Ifiles[i],Stdfiles[i],P[i],ddv)
         tot_indiv.fill_model()
-        indiv_model,indiv_data = tot_indiv.bin_model()
+        indiv_model,indiv_data,indiv_std = tot_indiv.bin_model()
         final_model = final_model+indiv_model # concatenate the models to have a list of spectra
-        final_data = final_data+indiv_data # same here for the data    
+        final_data = final_data+indiv_data
+        final_std = final_std+indiv_std# same here for the data    
     return {
 			"data": final_data,
-            "model": final_model
+            "model": final_model,
+            "std" : final_std
         }

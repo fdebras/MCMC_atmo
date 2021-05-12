@@ -138,7 +138,7 @@ class total_model:
     """
 
     
-    def __init__(self,Kp,Vsys,orders,Wmean,models,Vfiles,Ifiles,Planet,ddv):
+    def __init__(self,Kp,Vsys,orders,Wmean,models,Vfiles,Ifiles,Stdfiles,Planet,ddv):
         
         
         self.planet = Planet   ## Planet object
@@ -148,6 +148,7 @@ class total_model:
         
         self.Vfiles = Vfiles
         self.Ifiles = Ifiles
+        self.Stdfiles = Stdfiles
         
         self.Kp  = Kp  ## Values of semi-amplitude of the planet orbit for parameter search (1D vector)
         self.Vsys = Vsys   ## Values of radial velocity at mid-transit for parameter search (1D vector)
@@ -190,13 +191,14 @@ class total_model:
         
         data_ret = []
         model_ret = []  ### Init binned sequence of spectra
-        
-        
+        std_ret  = []
         c0      = 29979245800.0e-5
+        
         for i in range(len(self.orders)):
             # print(self.Wmean[i])
             V_data =  np.loadtxt(self.Vfiles[i])
             I_data = np.loadtxt(self.Ifiles[i])
+            Std_data =  np.loadtxt(self.Stdfiles[i])
             for n in range(num_spectra):
 
                 if (self.planet.window[n] > 0):
@@ -206,7 +208,7 @@ class total_model:
     			### For dd in the window centered on 0 and of 1 px width (here 2 km/s)
                     # print(self.models[i].nord,self.Wmean[i])
                     for dd in self.ddv:
-                        I_tmp += self.models[i].Fm(((V_data[n]+dd-DVP[n])/c0+1)*self.Wmean[i])*self.planet.window[n] 
+                        I_tmp += self.models[i].Fm(((V_data[n]+dd-DVP[n])/c0+1.0)*self.Wmean[i])*self.planet.window[n] 
                     I_tmp = I_tmp/len(self.ddv)### Average values to be closer to measured values
                     I_tmp -= np.mean(I_tmp)
                     model_ret.append(I_tmp)
@@ -214,11 +216,13 @@ class total_model:
                     data_tmp =  I_data[n]
                     data_tmp -= np.mean(data_tmp)
                     data_ret.append(data_tmp)
+                    
+                    std_ret.append(Std_data)
         # np.savetxt("lol.txt",I_ret)
         
         
         
-        return model_ret,data_ret ### Binned modelled sequence shifted at (kp,v0)
+        return model_ret,data_ret,std_ret ### Binned modelled sequence shifted at (kp,v0)
 
 
         # 
