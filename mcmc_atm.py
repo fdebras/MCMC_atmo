@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 
 import numpy as np
 import emcee
-mport corner
+import corner
 
 import petit_model
 
