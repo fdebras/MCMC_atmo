@@ -49,7 +49,7 @@ likelihood_factories = {
     # ),
     "brogi": lambda args: lhood.FullLikelihood(
         lhood.BrogiLikelihood()),
-    "Gibson": lambda args: lhood.FullLikelihood(
+    "gibson": lambda args: lhood.FullLikelihood(
         lhood.GibsonLikelihood())
 }
 
