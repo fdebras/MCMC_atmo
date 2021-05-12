@@ -27,9 +27,9 @@ param_names = [
 #        "kappa_IR",
 #        "gamma",
 #        "T_int",
-#        "T_eq",
+        "T_eq",
         "MMR_H2O",
-#        "MMR_CO",
+        "MMR_CO",
 #        "MMR_CO2",
         "Kp",
         "Vsys"

@@ -27,9 +27,10 @@ args = parser.parse_args()
 
 s, lp = samples.read_safe(args.h5file)
 n, nwalkers, ndim = s.shape
-print(ndim)
+print(n)
 
 nskip = int(3.*n/4.)
+print(nskip)
 ss = s[nskip:]
 
 prout = np.where(s[:,:,1]<300)
@@ -38,7 +39,9 @@ ss = s[prout]
 
 if args.corner is not None:
 	rng = samples.pack_theta({
-	"MMR_H2O": (-8.0, -2.0),
+        "T_eq": (200.0, 2500.0),
+        "MMR_H2O": (-8.0, 0.0),
+	"MMR_CO": (-8.0, 0.0),
 	"Kp": (100.0, 300.0),
 	"Vsys": (-20.0, 20.0)})
     # "lambda_max_layered": (0.6, 0.75),
